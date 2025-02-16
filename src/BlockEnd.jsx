@@ -22,7 +22,7 @@ export default function BlockEnd({ position = [0, 0, 0] }) {
         <primitive castshadow object={hamburger.scene} scale={0.2}></primitive>
       </RigidBody>
       <mesh
-        scale={[4, 0.2, 4]}
+        scale={[4, 0.1, 4]}
         geometry={boxGeometry}
         material={floor1Material}
         receiveShadow
