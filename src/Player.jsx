@@ -1,7 +1,7 @@
 import { useRapier, RigidBody } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
-import { useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import * as THREE from "three";
 
 export default function Player() {
@@ -9,6 +9,11 @@ export default function Player() {
   const playerBall = useRef();
   const { rapier, world } = useRapier();
   const rapierWorld = world.raw();
+
+  const [smoothedCameraPosition] = useState(
+    () => new THREE.Vector3(10, 10, 10)
+  );
+  const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
 
   const jump = () => {
     const origin = playerBall.current.translation();
@@ -85,8 +90,11 @@ export default function Player() {
     cameraTarget.copy(playerBallPosition);
     cameraTarget.y += 0.25;
 
-    state.camera.position.copy(cameraPosition);
-    state.camera.lookAt(cameraTarget);
+    smoothedCameraPosition.lerp(cameraPosition, 5 * delta);
+    smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
+
+    state.camera.position.copy(smoothedCameraPosition);
+    state.camera.lookAt(smoothedCameraTarget);
   });
 
   return (
