@@ -1,18 +1,29 @@
-import { RigidBody } from "@react-three/rapier";
+import { useRapier, RigidBody } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import { useRef, useEffect } from "react";
+import * as THREE from "three";
 
 export default function Player() {
   const [subscribeKeys, getKeys] = useKeyboardControls();
   const playerBall = useRef();
+  const { rapier, world } = useRapier();
+  const rapierWorld = world.raw();
 
   const jump = () => {
-    playerBall.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
+    const origin = playerBall.current.translation();
+    origin.y -= 0.31;
+    const direction = { x: 0, y: -1, z: 0 };
+    const ray = new rapier.Ray(origin, direction);
+    const hit = rapierWorld.castRay(ray, 10, true);
+
+    if (hit.toi < 0.15) {
+      playerBall.current.applyImpulse({ x: 0, y: 0.5, z: 0 });
+    }
   };
 
   useEffect(() => {
-    subscribeKeys(
+    const unsubscribeJump = subscribeKeys(
       (state) => {
         return state.jump;
       },
@@ -22,9 +33,14 @@ export default function Player() {
         }
       }
     );
+
+    return () => {
+      unsubscribeJump();
+    };
   }, []);
 
   useFrame((state, delta) => {
+    /*controls*/
     const { forward, backward, leftward, rightward } = getKeys();
 
     const impulse = { x: 0, y: 0, z: 0 };
@@ -54,6 +70,23 @@ export default function Player() {
 
     playerBall.current.applyImpulse(impulse);
     playerBall.current.applyTorqueImpulse(torque);
+
+    /* 
+    Camera
+    */
+
+    const playerBallPosition = playerBall.current.translation();
+    const cameraPosition = new THREE.Vector3();
+    cameraPosition.copy(playerBallPosition);
+    cameraPosition.z += 2.25;
+    cameraPosition.y += 0.65;
+
+    const cameraTarget = new THREE.Vector3();
+    cameraTarget.copy(playerBallPosition);
+    cameraTarget.y += 0.25;
+
+    state.camera.position.copy(cameraPosition);
+    state.camera.lookAt(cameraTarget);
   });
 
   return (
