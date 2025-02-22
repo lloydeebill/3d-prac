@@ -45,10 +45,20 @@ export default function Player() {
   };
 
   const reset = () => {
-    console.log("reset");
+    playerBall.current.setTranslation({ x: 0, y: 1, z: 0 });
+    playerBall.current.setLinvel({ x: 0, y: 0, z: 0 });
+    playerBall.current.setAngvel({ x: 0, y: 0, z: 0 });
   };
 
   useEffect(() => {
+    const unsubscribeReset = useGame.subscribe(
+      (state) => state.phase,
+      (phase) => {
+        if (phase === "ready") {
+          reset();
+        }
+      }
+    );
     const unsubscribeJump = subscribeKeys(
       (state) => {
         return state.jump;
@@ -67,6 +77,7 @@ export default function Player() {
     return () => {
       unsubscribeJump();
       unsubscribeAny();
+      unsubscribeReset();
     };
   }, []);
 

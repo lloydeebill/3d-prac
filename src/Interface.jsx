@@ -1,4 +1,6 @@
 import { useKeyboardControls } from "@react-three/drei";
+import useGame from "./stores/useGame";
+import { useRef } from "react";
 
 export default function Inheritance() {
   const forward = useKeyboardControls((state) => state.forward);
@@ -7,11 +9,23 @@ export default function Inheritance() {
   const rightward = useKeyboardControls((state) => state.rightward);
   const jump = useKeyboardControls((state) => state.jump);
 
+  const restart = useGame((state) => {
+    return state.restart;
+  });
+
+  const phase = useGame((state) => {
+    return state.phase;
+  });
+
   return (
     <>
       <div className="interface">
         <div className="time">0.00</div>
-        <div className="restart">Restart</div>
+        {phase === "ended" ? (
+          <div className="restart" onClick={restart}>
+            Restart
+          </div>
+        ) : null}
 
         <div className="controls">
           <div className="raw">
