@@ -10,12 +10,11 @@ export default function Experience() {
     return state.blocksCount;
   });
 
-  console.log(blocksCount);
   return (
     <>
       <OrbitControls makeDefault />
       <Physics>
-        <Level />
+        <Level count={blocksCount} />
         <Lights />
         <Player />
       </Physics>

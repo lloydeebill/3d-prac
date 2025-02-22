@@ -3,8 +3,25 @@ import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import { useState, useRef, useEffect } from "react";
 import * as THREE from "three";
+import useGame from "./stores/useGame.jsx";
 
 export default function Player() {
+  const start = useGame((state) => {
+    return state.start;
+  });
+
+  const end = useGame((state) => {
+    return state.end;
+  });
+
+  const restart = useGame((state) => {
+    return state.restart;
+  });
+
+  const blocksCount = useGame((state) => {
+    return state.blocksCount;
+  });
+
   const [subscribeKeys, getKeys] = useKeyboardControls();
   const playerBall = useRef();
   const { rapier, world } = useRapier();
@@ -27,6 +44,10 @@ export default function Player() {
     }
   };
 
+  const reset = () => {
+    console.log("reset");
+  };
+
   useEffect(() => {
     const unsubscribeJump = subscribeKeys(
       (state) => {
@@ -39,8 +60,13 @@ export default function Player() {
       }
     );
 
+    const unsubscribeAny = subscribeKeys(() => {
+      start();
+    });
+
     return () => {
       unsubscribeJump();
+      unsubscribeAny();
     };
   }, []);
 
@@ -95,6 +121,15 @@ export default function Player() {
 
     state.camera.position.copy(smoothedCameraPosition);
     state.camera.lookAt(smoothedCameraTarget);
+
+    //Phases
+    if (playerBallPosition.z < -(blocksCount * 4 + 2)) {
+      end();
+    }
+
+    if (playerBallPosition.y < -4) {
+      restart();
+    }
   });
 
   return (
