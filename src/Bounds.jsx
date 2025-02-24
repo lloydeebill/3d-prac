@@ -8,7 +8,7 @@ export default function Bounds({ length = 1 }) {
       <RigidBody type="fixed" restitution={0.2} friction={0}>
         <mesh
           castShadow
-          position={[2.15, 0.7, -(length * 2) + 2]}
+          position={[2, 0.7, -(length * 2) + 2]}
           scale={[0.3, 1.15, 4 * length]}
           geometry={boxGeometry}
           material={wallMaterial}
@@ -16,7 +16,7 @@ export default function Bounds({ length = 1 }) {
 
         <mesh
           receiveShadow
-          position={[-2.15, 0.7, -(length * 2) + 2]}
+          position={[-2, 0.7, -(length * 2) + 2]}
           scale={[0.3, 1.15, 4 * length]}
           geometry={boxGeometry}
           material={wallMaterial}

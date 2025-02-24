@@ -33,7 +33,7 @@ export default function WallBlock({ position = [0, 0, 0] }) {
         ref={obstacleWall}
       >
         <mesh
-          scale={[2, 1.75, 0.2]}
+          scale={[1.75, 1.75, 0.2]}
           geometry={boxGeometry}
           material={obstacleMaterial}
           castShadow

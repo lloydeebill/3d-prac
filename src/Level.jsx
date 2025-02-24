@@ -6,10 +6,12 @@ import WallBlock from "./WallBlock.jsx";
 import BlockEnd from "./BlockEnd.jsx";
 import Bounds from "./Bounds.jsx";
 import { useMemo } from "react";
+import { Float, Text } from "@react-three/drei";
 
 export default function Level({
   count = 5,
   types = [SpinningBlock, WallBlock, LimboBlock],
+  seed = 0,
 }) {
   THREE.ColorManagement.legacyMode = false;
 
@@ -21,16 +23,18 @@ export default function Level({
       blocks.push(type);
     }
     return blocks;
-  }, [count, types]);
+  }, [count, types, seed]);
 
   return (
     <>
-      <BlockStart position={[0, 0, 0]} />
+      <group>
+        <BlockStart position={[0, 0, 0]} />
+      </group>
 
       {blocks.map((Block, index) => (
         <Block key={index} position={[0, 0, -(index + 1) * 4]} />
       ))}
-      <BlockEnd position={[0, 0.2, -(count + 1) * 4]} />
+      <BlockEnd position={[0, 0.15, -(count + 1) * 4]} />
       <Bounds length={count + 2} />
     </>
   );
